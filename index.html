@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Задание</title>
+</head>
+<body>
+
+<div class="page">
+    <h1>Задание</h1>
+  <div class="form">
+    <form action="" onsubmit="return sendMessage(event)" class="login-form">
+      <input type="text" placeholder="Enter your message" id="messageText" autocomplete="off"/>
+        <script src="/static/script.js"></script>
+      <button class="classes">Отправить сообщение</button>
+    </form>
+        <script>
+            var ws = new WebSocket("ws://localhost:8000/ws");
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                message_json = JSON.parse(event.data)
+                message_num = message_json['message_number']
+                message_out = message_json['send_message']
+                var content = document.createTextNode(message_num + '. ' + message_out)
+                message.appendChild(content)
+                messages.appendChild(message)
+            };
+            function sendMessage(event) {
+                var input = document.getElementById("messageText");
+                let message_data = {
+                                  send_message: input.value}
+                let json_message = JSON.stringify(message_data);
+                ws.send(json_message)
+                input.value = ''
+                event.preventDefault()
+            }
+        </script>
+  </div>
+
+</div>
+
+ <ul id='messages' class="first">
+        </ul>
+
+
+</body>
+</html>
